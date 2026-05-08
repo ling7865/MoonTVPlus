@@ -15,19 +15,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare Pages
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # 消除 Node20 警告
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v5
 
-      # 正确：一次配置 Node + PNPM 缓存
       - name: Setup Node.js & pnpm
         uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: 'pnpm'
 
-      # 必须安装 pnpm，否则无法使用
       - name: Install pnpm
         run: npm install -g pnpm
 
@@ -127,7 +127,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy to Cloudflare
-        uses: cloudflare/wrangler-action@v4
+        uses: cloudflare/wrangler-action@v3  # 这里已修复
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
